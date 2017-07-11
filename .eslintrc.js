@@ -54,7 +54,7 @@ module.exports = {
     'no-extra-label': 'error',
     'no-fallthrough': 'error',
     'no-floating-decimal': 'error',
-    'no-magic-numbers': 'error',
+    'no-magic-numbers': 0,
     'no-multi-spaces': 'error',
     'no-multi-str': 'error',
     'no-new-func': 'error',
