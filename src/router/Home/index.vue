@@ -1,17 +1,32 @@
 <template>
   <main>
-    <el-button type="primary" @click.native="hello">primary</el-button>
-    <hello message="sdfgsdfg"></hello>
-    <div class="div1">adsfadsfa</div>
+    <el-input :meta="meta" v-model="value" :value="value"></el-input>
+    <div class="div1">{{value}}</div>
   </main>
 </template>
 
 <script>
-  import Hello from '../../components/Hello.vue';
+  import Input from '../../components/Input.vue';
 
   export default {
+    data () {
+      return {
+        value: 'adfasdf',
+        meta: {
+          required: true,
+          label: '请输入内容1',
+          params: {
+            type: 'text',
+            value: '',
+            placeholder: '请输入内容1'
+
+          }
+        }
+      };
+
+    },
     components: {
-      Hello
+      ElInput: Input
     },
     methods: {
       hello () {

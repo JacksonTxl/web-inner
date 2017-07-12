@@ -1,9 +1,9 @@
 # web-inner
 
-To start:
+document:
 
 ```bash
-$ npm install
+powerset //权限设置页面
 ```
 
 To develop:
