@@ -1,6 +1,6 @@
 <template>
   <main>
-    <el-input :meta="meta" v-model="value" :value="value"></el-input>
+    <el-input :meta="meta" v-model="value" :value="value" type="text" :onKeyup="keyup(value)"></el-input>
     <div class="div1">{{value}}</div>
   </main>
 </template>
@@ -11,7 +11,7 @@
   export default {
     data () {
       return {
-        value: 'adfasdf',
+        value: '1234',
         meta: {
           required: true,
           label: '请输入内容1',
@@ -20,6 +20,14 @@
             value: '',
             placeholder: '请输入内容1'
 
+          }
+        },
+        keyup: function (value) {
+          if (!/^[a-zA-Z0-9_.·() （）@!#-$%&*()+/<>;']+/.test(value)) {
+            console.log(111);
+            this.meta.required = false;
+          } else {
+            this.meta.required = true;
           }
         }
       };
@@ -30,7 +38,7 @@
     },
     methods: {
       hello () {
-        this.$message('Hello Vue');
+        console.log('1221');
       }
     }
   };
