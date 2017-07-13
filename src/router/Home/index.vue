@@ -1,6 +1,6 @@
 <template>
   <main>
-    <el-input :meta="meta" v-model="value" :value="value" type="text" :onKeyup="keyup(value)"></el-input>
+    <el-input :meta="meta" v-model="value" :maxlength="1" :value="value" type="text" :onKeyup="keyup(value)"></el-input>
     <div class="div1">{{value}}</div>
   </main>
 </template>

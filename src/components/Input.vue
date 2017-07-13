@@ -1,6 +1,6 @@
 <template>
-  <main class="pro-input">
-      <div class="input-label">
+  <main class="pro-input pro-input-code">
+      <div class="input-label" v-if="false">
         <span v-if="meta.required">*</span>
         <label>{{meta.label}}</label>
       </div>
@@ -13,6 +13,7 @@
                   v-bind="$props"
                   :autocomplete="autoComplete"
                   :value="currentValue"
+                  :maxlength="maxlength"
                   ref="input"
                   @input="handleInput"
                   @focus="handleFocus"
@@ -21,7 +22,7 @@
           />
           <input
                   v-else="type === 'password'"
-                  type="text"
+                  type="password"
                   class="el-input__inner"
                   v-bind="$props"
                   :autocomplete="autoComplete"
@@ -34,10 +35,10 @@
           />
           <div class="end-pic"></div>
       </div>
-      <p class="tips">
+      <p class="tips" v-if="false">
           这是测试提示
       </p>
-
+      <div class="get-code">获取验证码</div>
   </main>
 </template>
 
@@ -73,6 +74,7 @@
         type: String,
         default: 'password'
       },
+      maxlength: [String, Number],
       onKeyup: Function
 
     },
@@ -132,10 +134,33 @@
             margin-top: 4px;
             display: flex;
             background-color: #FFF;
+            border-radius:2px;
+            >.pre-pic{
+               background: url(../images/bg.png) no-repeat;
+               height: 32px;
+               width: 24px;
+               display: none;
+                &.write{
+                     display: block;
+                     background-position: -343px -187px;
+                }
+                &.password{
+                     display: block;
+                     background-position: -277px -187px;
+                }
+                &.phone{
+                     display: block;
+                     background-position: -140px -187px;
+                }
+                &.phone-code{
+                     display: block;
+                     background-position: -208px -187px;
+                }
+            }
             >input{
                 height: 32px;
                 border-width: 0px;
-                padding: 0 10px;
+                padding: 0 5px;
                 flex: 1;
                 outline: 0;
                 transition: border-color .2s cubic-bezier(.645,.045,.355,1);
@@ -170,9 +195,27 @@
             }
         }
         >.tips{
-            font-size: 12px;
-            color: #F82617;
-            display: none;
+             font-size: 12px;
+             color: #F82617;
+             display: none;
+         }
+    }
+    .pro-input-code{
+         display: flex;
+        >.input{
+             flex: 1;
+        }
+        >.get-code{
+             flex: 1;
+             height: 34px;
+             margin-left: 12px;
+             line-height: 34px;
+             text-align: center;
+             border-radius: 2px;
+             background-color: rgb(58, 149, 222);
+             color: white;
+             cursor: default;
+             margin-top: 4px;
         }
     }
 </style>
