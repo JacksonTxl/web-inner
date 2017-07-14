@@ -1,40 +1,26 @@
 <template>
   <main>
-    <el-input :meta="meta" v-model="value" :maxlength="1" :value="value" type="text" :onKeyup="keyup(value)"></el-input>
-    <div class="div1">{{value}}</div>
+    <e-button :label="button.label" :disabled="button.disabled"></e-button>
   </main>
 </template>
 
 <script>
-  import Input from '../../components/Input.vue';
+  import Button from '../../components/Button.vue';
 
   export default {
     data () {
       return {
-        value: '1234',
-        meta: {
-          required: true,
-          label: '请输入内容1',
-          params: {
-            type: 'text',
-            value: '',
-            placeholder: '请输入内容1'
-
-          }
-        },
-        keyup: function (value) {
-          if (!/^[a-zA-Z0-9_.·() （）@!#-$%&*()+/<>;']+/.test(value)) {
-            console.log(111);
-            this.meta.required = false;
-          } else {
-            this.meta.required = true;
+        button: {
+          label: 'test1',
+          disabled: {
+            disabled: 'disabled'
           }
         }
       };
 
     },
     components: {
-      ElInput: Input
+      EButton: Button
     },
     methods: {
       hello () {
