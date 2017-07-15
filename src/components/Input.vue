@@ -56,7 +56,7 @@
           <p class="tips" v-if="!isCode" :class="params.tips.class">
               {{params.tips.label}}
           </p>
-          <div class="get-code" v-if="isCode" :class="params.code.class" @click="params.code.click">{{params.code.label}}</div>
+          <button class="get-code" v-if="isCode" :class="params.code.class" @click="params.code.click" v-bind="params.code.disabled">{{params.code.label}}</button>
       </div>
 
   </main>
@@ -100,7 +100,10 @@
           },
           code: {
             label: '',
-            class: 'disabled'
+            disabled: {},
+            click: function () {
+              console.log('点击了获取验证码的按钮!');
+            }
           }
         }
       },
@@ -262,9 +265,11 @@
              color: white;
              cursor: default;
              margin-top: 4px;
-            &.disabled{
-                background-color: #cccccc;
-            }
+             border-width: 0;
+
+        }
+        >button[disabled]{
+             background-color: #cccccc;
         }
     }
 </style>

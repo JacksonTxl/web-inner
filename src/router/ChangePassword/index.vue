@@ -1,7 +1,8 @@
 <template>
-  <main class="bind-phone">
-      <s-input placeholder="手机号" type="text" :isCode="false" :maxlength="11" :params="phone_num"></s-input>
-      <s-input placeholder="验证码" type="text" :isCode="true" :maxlength="4" :params="code"></s-input>
+  <main class="change-password">
+      <s-input placeholder="输入当前登录密码" type="password" :isCode="false" :maxlength="16" :params="pre_password"></s-input>
+      <s-input placeholder="密码由6-16个字符组成，区分大小写" type="password" :isCode="false" :maxlength="16" :params="new_password"></s-input>
+      <s-input placeholder="再次输入新密码" type="password" :isCode="false" :maxlength="16" :params="confirm_password"></s-input>
       <s-button :disabled="button.disabled" :label="button.label"></s-button>
   </main>
 </template>
@@ -13,11 +14,11 @@
   export default {
 
     data () {
-      document.title = '手机绑定';
+      document.title = '修改密码';
       return {
-        phone_num: {
+        pre_password: {
           required: true,
-          label: '你的手机',
+          label: '当前密码',
           endpic: {
             show: true
           },
@@ -37,9 +38,9 @@
             class: ''
           }
         },
-        code: {
+        new_password: {
           required: true,
-          label: '验证码',
+          label: '新密码',
           endpic: {
             show: true
           },
@@ -51,13 +52,30 @@
             class: ''
           },
           code: {
-            label: '获取验证码',
-            disabled: {
-              disabled: 'disabled'
-            },
-            click: function () {
-              console.log('点击了获取验证码');
-            }
+            label: '',
+            class: 'disabled'
+          },
+          prepic: {
+            show: false,
+            class: ''
+          }
+        },
+        confirm_password: {
+          required: true,
+          label: '确认新密码',
+          endpic: {
+            show: true
+          },
+          input: {
+            class: ''
+          },
+          tips: {
+            label: '',
+            class: ''
+          },
+          code: {
+            label: '',
+            class: 'disabled'
           },
           prepic: {
             show: false,
@@ -82,7 +100,7 @@
   };
 </script>
 <style lang="scss">
-  .bind-phone{
+  .change-password{
       margin-top: 36px;
       width:324px;
       margin-left: calc((100% - 324px) / 2);
