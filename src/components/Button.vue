@@ -32,6 +32,7 @@
       border-width: 0;
       padding: 0 5px;
       width: 100%;
+      font-size: 14px;
     }
     >button[disabled]{
       background-color: #cccccc;

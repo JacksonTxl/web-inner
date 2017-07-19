@@ -8,6 +8,7 @@ import ResetPassword from './ResetPassword';
 import Register from './Register';
 import DownUrl from './DownUrl';
 import CreateGroup from './CreateGroup';
+import Frame from './Frame';
 
 Vue.use(Router);
 
@@ -53,6 +54,11 @@ export default new Router({
       name: 'CreateGroup',
       path: '/creategroup',
       component: CreateGroup
+    },
+    {
+      name: 'Frame',
+      path: '/frame',
+      component: Frame
     }
   ]
 });
