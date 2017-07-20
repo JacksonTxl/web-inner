@@ -10,6 +10,7 @@ import DownUrl from './DownUrl';
 import CreateGroup from './CreateGroup';
 import Frame from './Frame';
 import Transfer from './Transfer';
+import Search from './Search';
 
 Vue.use(Router);
 
@@ -65,6 +66,11 @@ export default new Router({
       name: 'Transfer',
       path: '/transfer',
       component: Transfer
+    },
+    {
+      name: 'Search',
+      path: '/search',
+      component: Search
     }
   ]
 });
