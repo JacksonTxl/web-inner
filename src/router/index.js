@@ -9,6 +9,7 @@ import Register from './Register';
 import DownUrl from './DownUrl';
 import CreateGroup from './CreateGroup';
 import Frame from './Frame';
+import Transfer from './Transfer';
 
 Vue.use(Router);
 
@@ -59,6 +60,11 @@ export default new Router({
       name: 'Frame',
       path: '/frame',
       component: Frame
+    },
+    {
+      name: 'Transfer',
+      path: '/transfer',
+      component: Transfer
     }
   ]
 });
