@@ -5,7 +5,7 @@
       <span :class="isOk?'':'active'"><label @click="click">申请入群</label></span>
     </header>
     <section>
-      <div>
+      <div class="input">
         <input placeholder="请输入手机号/ID">
         <!--<img src="../../images/transfer/transfer-1.jpg">-->
         <button>查找</button>
@@ -72,7 +72,29 @@
           }
         }
       }
-
+      >section{
+        >.input{
+          display: flex;
+          padding: 15px 20px;
+          >input{
+            flex: 1;
+            height: 32px;
+            padding: 0 10px;
+            border: solid 1px #d6d6d6;
+            border-right-width: 0;
+            &:hover,&:focus{
+              border: solid 1px #3a95de;
+            }
+          }
+          >button{
+            width: 90px;
+            height: 34px;
+            border: 0;
+            color: #ffffff;
+            background-color: #3a95de;
+          }
+        }
+      }
     }
 
 </style>
