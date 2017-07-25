@@ -107,9 +107,9 @@
 </script>
 <style lang="scss">
   .register{
-      margin-top: 10px;
+      margin: auto;
+      padding-top: 10px;
       width:245px;
-      margin-left: calc((100% - 245px) / 2);
       >.pro-input{
           margin-bottom: 15px;
           >.s-input-code{
