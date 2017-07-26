@@ -28,24 +28,24 @@
         <label>专注团队内部沟通</label>
         <p>请输入完整手机号/账号添加好友</p>
       </div>
-      <ul v-show="!search.show">
-        <li v-for="item in 10">
-          <img src="../../images/search/search-1.png">
-          <div>
-            <label>测试111</label>
-            <p>群公告：唱儿歌</p>
-          </div>
-          <button>加群</button>
-        </li>
-      </ul>
+      <vue-perfect-scrollbar class="scroll-area" :settings="settings" @ps-y-reach-end="scrollEnd">
+        <ul v-show="!search.show">
+          <li v-for="item in search.items">
+            <img :src="item.src">
+            <div>
+              <label>{{item.label}}</label>
+              <p>{{item.sign}}</p>
+            </div>
+            <button>加群</button>
+          </li>
+        </ul>
+      </vue-perfect-scrollbar>
     </section>
-
-
   </main>
 </template>
 
 <script>
-  import VueQRCodeComponent from 'vue-qrcode-component';
+  import VuePerfectScrollbar from 'vue-perfect-scrollbar';
   export default {
 
     data () {
@@ -65,21 +65,63 @@
               sign: '这个家伙很懒，没有个性签名',
               verify: '我是张飞，请求添加您为好友。'
             }
-          }
+          },
+          scrollflag: true,
+          items: []
+        },
+        settings: {
+          maxScrollbarLength: 60
         }
       };
     },
     components: {
-      QrCode: VueQRCodeComponent
+      VuePerfectScrollbar
     },
     methods: {
       click () {
         this.isOk = !this.isOk;
+      },
+      scrollHanle (evt) {
+        document.addEventListener('ps-y-reach-end', function () {
+          alert(111);
+        });
+      },
+      scrollEnd (evt) {
+        if (this.search.scrollflag) {
+          this.addData();
+          console.log('end');
+        }
+      },
+      addData () {
+        this.search.scrollflag = false;
+        var items = this.search.items;
+
+        console.log(this.search.items);
+        for (var i = 0;i < 10;i++) {
+          items.push({
+            src: 'http://t12.baidu.com/it/u=1810232558,1994937769&fm=58',
+            label: '这是张飞的测试群组' + i,
+            sign: '这是张飞的测试群组签名'
+          });
+        }
+        this.search.items = items;
+        this.search.scrollflag = true;
       }
+    },
+    mounted () {
+      this.$nextTick(function () {
+        this.addData();
+      });
     }
   };
 </script>
 <style lang="scss">
+    .scroll-area {
+      position: relative;
+      margin: auto;
+      width: 100%;
+      height: 340px;
+    }
     .search{
       text-align: center;
       color: #333;
@@ -206,38 +248,43 @@
             margin-top: 10px;
           }
         }
-        >ul{
-          >li{
-            display: flex;
-            padding: 10px 20px;
-            height: 40px;
-            border-bottom: solid 1px #e5e5e5;
-            >img{
-              width: 40px;
+        >.scroll-area{
+          >ul{
+            >li{
+              display: flex;
+              padding: 10px 20px;
               height: 40px;
-            }
-            >div{
-              flex: 1;
-              text-align: left;
-              padding-left: 10px;
-              >label{
-                display: inline-block;
-                padding: 5px 0;
+              border-bottom: solid 1px #e5e5e5;
+              >img{
+                width: 40px;
+                height: 40px;
               }
-              >p{
-                color: #a2a7aa;
+              >div{
+                flex: 1;
+                text-align: left;
+                padding-left: 10px;
+                >label{
+                  display: inline-block;
+                  padding: 5px 0;
+                }
+                >p{
+                  color: #a2a7aa;
+                  font-size: 12px;
+                }
+              }
+              >button{
+                width: 50px;
+                height: 20px;
+                background-color: #3a95de;
+                border-width: 0;
+                color: #fff;
+                border-radius: 2px;
                 font-size: 12px;
+                margin-top: 10px;
               }
-            }
-            >button{
-              width: 50px;
-              height: 20px;
-              background-color: #3a95de;
-              border-width: 0;
-              color: #fff;
-              border-radius: 2px;
-              font-size: 12px;
-              margin-top: 10px;
+              &:hover{
+                background-color: #e3ecf2;
+              }
             }
           }
         }
