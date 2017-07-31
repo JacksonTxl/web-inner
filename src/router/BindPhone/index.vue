@@ -1,6 +1,6 @@
 <template>
   <main class="bind-phone">
-      <s-input placeholder="手机号" type="text" :isCode="false" :maxlength="11" :params="phone_num"></s-input>
+      <s-input placeholder="手机号" type="text" :isCode="false" :maxlength="11" :params="phone_num" @keyup="checkPhone" v-model="phone_num.input.value" @focus="checkPhoneFocus"></s-input>
       <s-input placeholder="验证码" type="text" :isCode="true" :maxlength="4" :params="code"></s-input>
       <s-button :disabled="button.disabled" :label="button.label"></s-button>
   </main>
@@ -9,6 +9,7 @@
 <script>
   import Input from '../../components/Input.vue';
   import Button from '../../components/Button.vue';
+  import CONSTANT from '../../util/constant';
 
   export default {
 
@@ -22,7 +23,8 @@
             show: true
           },
           input: {
-            class: ''
+            class: '',
+            value: ''
           },
           tips: {
             label: '',
@@ -77,15 +79,28 @@
       SButton: Button
     },
     methods: {
+      checkPhoneFocus () {
+        this.phone_num.input.class = 'focus';
+      },
+      checkPhone () {
+        var isPhone = CONSTANT.methods.checkPhone(this.phone_num.input.value);
 
+        if (isPhone) {
+          this.phone_num.input.class = 'success';
+        } else if (!isPhone && this.phone_num.input.value.length === 11) {
+          this.phone_num.input.class = 'error';
+        } else {
+          this.phone_num.input.class = 'focus';
+        }
+      }
     }
   };
 </script>
 <style lang="scss">
   .bind-phone{
-      margin-top: 36px;
+      padding-top: 36px;
+      margin: auto;
       width:324px;
-      margin-left: calc((100% - 324px) / 2);
       >.pro-input{
           margin-bottom: 15px;
       }

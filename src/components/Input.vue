@@ -222,7 +222,7 @@
                 }
 
             }
-            >.input:hover{
+            >.input:hover,.input:focus{
                 border-color: rgb(32,160,255);
             }
             >.error{
@@ -239,6 +239,9 @@
                     background-position: -160px -243px;
                 }
             }
+            >.focus{
+                 border-color: rgb(32,160,255);
+             }
             >.tips{
                 font-size: 12px;
                 color: #F82617;

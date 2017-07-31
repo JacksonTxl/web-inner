@@ -99,7 +99,7 @@
         console.log(this.search.items);
         for (var i = 0;i < 10;i++) {
           items.push({
-            src: 'http://t12.baidu.com/it/u=1810232558,1994937769&fm=58',
+            src: require('../../images/search/search-3.png'),
             label: '这是张飞的测试群组' + i,
             sign: '这是张飞的测试群组签名'
           });
