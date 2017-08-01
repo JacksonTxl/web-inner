@@ -10,7 +10,7 @@ export default {
       if (!value && value.length != 11) return;
       return /^1[34578]\d{9}$/.test(value);
     },
-    //  校验手机验证码返回结果
+    //  校验验证码返回结果
     checkPhoneCode (value) {
       if (!value && value.length != 4) return;
       return /^\d{4}$/.test(value);

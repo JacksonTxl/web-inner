@@ -121,7 +121,7 @@
         const TIP2 = '密码6~16位字符组成，区分大小写，不能和旧密码一样';
         const TIP3 = '再次输入新密码';
         var prePsw = CONSTANT.methods.checkPsw(this.pre_password.input.value);
-        var newPsw = CONSTANT.methods.checkPsw(this.new_password.input.value);
+        var newPsw = CONSTANT.methods.checkPsw(this.new_password.input.value) && !(this.pre_password.input.value === this.new_password.input.value);
         var conPsw = (this.confirm_password.input.value === this.new_password.input.value) && this.confirm_password.input.value.length >= 6;
 
         if (prePsw && newPsw && conPsw) {

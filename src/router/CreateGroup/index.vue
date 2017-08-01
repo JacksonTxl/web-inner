@@ -116,6 +116,7 @@
       document.title = '创建组织';
       return {
         interval: {},
+        timeout: {},
         show_index: 1,
         shows: [true, false, false, false, false, false],
         button1: {
@@ -139,9 +140,10 @@
       },
       selectPic (index) {
         clearInterval(this.interval);
+        clearTimeout(this.timeout);
         this.shows = [false, false, false, false, false, false];
         this.shows[index] = true;
-        setTimeout(() => {
+        this.timeout = setTimeout(() => {
           this.show_index = index++;
           this.start();
         }, 3000);
@@ -162,7 +164,8 @@
                 text-align: center;
                 >div{
                     cursor: default;
-                    margin: 40px 0 46px 0;
+                    margin: 0 0 46px 0;
+                    padding-top: 40px;
                     >label{
                         font-size: 20px;
                     }
