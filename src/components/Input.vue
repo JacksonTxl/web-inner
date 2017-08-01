@@ -53,7 +53,7 @@
               />
               <div class="end-pic" :class="params.endpic.class" v-if="params.endpic.show"></div>
           </div>
-          <p class="tips" v-if="!isCode" :class="params.tips.class">
+          <p class="tips" v-if="!isCode&&params.tips.show" :class="params.tips.class">
               {{params.tips.label}}
           </p>
           <button class="get-code" v-if="isCode" :class="params.code.class" @click="params.code.click" v-bind="params.code.disabled">{{params.code.label}}</button>
@@ -244,8 +244,8 @@
              }
             >.tips{
                 font-size: 12px;
+                height: 15px;
                 color: #F82617;
-                display: none;
                 &.show{
                     display: block;
                 }

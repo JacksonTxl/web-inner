@@ -23,11 +23,13 @@
             show: true
           },
           input: {
-            class: ''
+            class: '',
+            value: ''
           },
           tips: {
-            label: '',
-            class: ''
+            label: '您输入的信息有误，不能为空,长度6~16',
+            class: '',
+            show: true
           },
           code: {
             label: '',
@@ -45,11 +47,13 @@
             show: true
           },
           input: {
-            class: ''
+            class: '',
+            value: ''
           },
           tips: {
-            label: '',
-            class: ''
+            label: '密码6~16位字符组成，区分大小写，不能和旧密码一样',
+            class: '',
+            show: true
           },
           code: {
             label: '',
@@ -67,11 +71,13 @@
             show: true
           },
           input: {
-            class: ''
+            class: '',
+            value: ''
           },
           tips: {
-            label: '',
-            class: ''
+            label: '再次输入新密码 ',
+            class: '',
+            show: true
           },
           code: {
             label: '',
@@ -101,12 +107,10 @@
 </script>
 <style lang="scss">
   .change-password{
-      margin-top: 36px;
       width:324px;
-      margin-left: calc((100% - 324px) / 2);
-      >.pro-input{
-          margin-bottom: 15px;
-      }
+      margin: auto;
+      padding-top: 36px;
+
       >.pro-button{
           margin-top: 40px;
       }
