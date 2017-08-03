@@ -1,6 +1,6 @@
 <template>
   <main class="pro-button">
-    <button v-bind="disabled">{{label}}</button>
+    <button v-bind="disabled" @click="click">{{label}}</button>
   </main>
 </template>
 
@@ -15,8 +15,8 @@
         type: String,
         default: 'test1'
       },
-      disabled: Object
-
+      disabled: Object,
+      click: Function
     }
   };
 </script>

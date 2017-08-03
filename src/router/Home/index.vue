@@ -1,11 +1,12 @@
 <template>
   <main>
-    <e-button :label="button.label" :disabled="button.disabled"></e-button>
+    <e-button :label="button.label" :disabled="button.disabled" :click="hello"></e-button>
   </main>
 </template>
 
 <script>
   import Button from '../../components/Button.vue';
+  import { AES, enc } from 'crypto-js';
 
   export default {
     data () {
@@ -13,7 +14,7 @@
         button: {
           label: 'test1',
           disabled: {
-            disabled: 'disabled'
+
           }
         }
       };
@@ -24,7 +25,15 @@
     },
     methods: {
       hello () {
-        console.log('1221');
+        // Encrypt
+        var ciphertext = AES.encrypt('my message', 'iwanli');
+
+        // Decrypt
+        var bytes = AES.decrypt(ciphertext.toString(), 'iwanli');
+        var plaintext = bytes.toString(enc.Utf8);
+
+        console.log(ciphertext.toString());
+        console.log(plaintext);
       }
     }
   };
