@@ -44,7 +44,7 @@ module.exports = {
     'consistent-return': 'error',
     'curly': 'error',
     'default-case': 'error',
-    'dot-location': ['error', 'object'],
+    'dot-location': ['error', 'object'],//
     'eqeqeq': 'error',
     'no-case-declarations': 'error',
     'no-else-return': 'error',

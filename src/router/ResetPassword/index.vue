@@ -1,23 +1,42 @@
 <template>
   <main class="reset-password">
-      <h3>重置密码</h3>
-      <s-input placeholder="手机号" type="text" :isCode="false" :maxlength="11" :params="phone_num" @keyup="checkPhone(false,'phone')" v-model="phone_num.input.value" @focus="checkFocus('phone')" @blur="checkBlur('phone')"></s-input>
-      <s-input placeholder="验证码" type="text" :isCode="true" :maxlength="4" :params="code" @keyup="checkPhone(false,'code')" v-model="code.input.value" @focus="checkFocus('code')" @blur="checkBlur('code')"></s-input>
-      <s-input placeholder="新密码,6~16个字符,不含空格" type="password" :isCode="false" :maxlength="16" :params="password" @keyup="checkPhone(false,'password')" v-model="password.input.value" @focus="checkFocus('password')" @blur="checkBlur('password')"></s-input>
-      <s-button :disabled="button.disabled" :label="button.label"></s-button>
+      <div class="inputs" v-if="show=='input'">
+          <h3>重置密码</h3>
+          <s-input placeholder="手机号" type="text" :isCode="false" :maxlength="11" :params="phone_num" @keyup="checkPhone(false,'phone')" v-model="phone_num.input.value" @focus="checkFocus('phone')" @blur="checkBlur('phone')"></s-input>
+          <s-input placeholder="验证码" type="text" :isCode="true" :maxlength="4" :params="code" @keyup="checkPhone(false,'code')" v-model="code.input.value" @focus="checkFocus('code')" @blur="checkBlur('code')"></s-input>
+          <s-input placeholder="新密码,6~16个字符,不含空格" type="password" :isCode="false" :maxlength="16" :params="password" @keyup="checkPhone(false,'password')" v-model="password.input.value" @focus="checkFocus('password')" @blur="checkBlur('password')"></s-input>
+          <s-button :disabled="button.disabled" :label="button.label" @click="commit"></s-button>
+          <p>已有账号？<label>返回登录</label></p>
+      </div>
+      <div class="img-code" v-if="show=='code'">
+          <h3>输入图形验证码</h3>
+          <label>验证成功后可收到短信验证码</label>
+          <s-input placeholder="图形验证码" type="text" :isCode="false" :maxlength="6" :params="img_code" @keyup="checkImgCode(false)" v-model="img_code.input.value" @focus="checkFocus('img_code')" @blur="checkBlur('img_code')"></s-input>
+          <div>
+              <img :src="img_code.src" alt="图形验证码">
+              <p>看不清？<label @click="getImgCode">换一张</label></p>
+          </div>
+          <s-button :disabled="button_code.disabled" :label="button_code.label" @click="sendPhoneCode"></s-button>
+          <s @click="goBack">返回</s>
+      </div>
+      <s-success v-if="show=='success'" :tips="success_tip.tips" :button="success_tip.button" @click="goLogin"></s-success>
   </main>
 </template>
 
 <script>
   import Input from '../../components/Input.vue';
   import Button from '../../components/Button.vue';
+  import Success from '../../components/Success.vue';
   import CONSTANT from '../../util/constant';
+  import { Message } from 'element-ui';
+  import { AES } from 'crypto-js';
 
   export default {
 
     data () {
       document.title = '重置密码';
       return {
+        show: 'input',
         phone_num: {
           required: true,
           label: '',
@@ -56,12 +75,28 @@
             class: ''
           },
           code: {
+            interval: '',
             label: '获取验证码',
             disabled: {
               disabled: 'disabled'
             },
-            click: function () {
-              console.log('点击了获取验证码');
+            click: () => {
+              this.show = 'code';
+              var _this = this;
+              var time = 60;
+
+              _this.code.code.interval = setInterval(() => {
+                time--;
+                _this.code.code.label = time + 's后重试';
+                _this.code.code.disabled = {disabled: 'disabled'};
+                if (time <= 0) {
+                  clearInterval(_this.code.code.interval);
+                  _this.code.code.disabled = {};
+                  _this.code.code.label = time + '获取验证码';
+                }
+              }, 1000);
+
+              this.getImgCode();
             }
           },
           prepic: {
@@ -97,11 +132,54 @@
           disabled: {
             disabled: 'disabled'
           }
+        },
+        img_code: {
+          src: 'https://avatars2.githubusercontent.com/u/20331323?v=4&s=48',
+          required: true,
+          label: '',
+          endpic: {
+            show: true
+          },
+          input: {
+            class: '',
+            value: ''
+          },
+          tips: {
+            label: '',
+            class: '',
+            show: true
+          },
+          code: {
+            label: '',
+            class: 'disabled'
+          },
+          prepic: {
+            show: true,
+            class: 'phone-code'
+          }
+        },
+        button_code: {
+          label: '提交',
+          disabled: {
+            disabled: 'disabled'
+          }
+        },
+        success_tip: {
+          tips: {
+            label: '重置密码成功!',
+            p: '您的登录账号：18201962479',
+            show: false
+          },
+          button: {
+            label: '马上登录',
+            disabled: {}
+          }
         }
       };
     },
     components: {
       SInput: Input,
+      SSuccess: Success,
       SButton: Button
     },
     methods: {
@@ -115,7 +193,11 @@
         }
       },
       checkBlur (type) {
-        this.checkPhone(true, type);
+        if (type === 'img_code') {
+          this.checkImgCode(true);
+        } else {
+          this.checkPhone(true, type);
+        }
       },
       checkPhone (flag, type) {
         var isPhone = CONSTANT.methods.checkPhone(this.phone_num.input.value);
@@ -127,7 +209,7 @@
         } else {
           this.button.disabled = {disabled: 'disabled'};
         }
-        if (isPhone && type === 'phone') {
+        if (isPhone && type === 'phone' && !this.code.code.interval) {
           this.phone_num.input.class = 'success';
           this.code.code.disabled = {};
         } else if (!isPhone && (this.phone_num.input.value.length === 11 || flag) && type === 'phone') {
@@ -151,6 +233,103 @@
         } else if (type === 'password') {
           this.password.input.class = 'focus';
         }
+      },
+      checkImgCode (flag) {
+        var isImgCode = CONSTANT.methods.checkImgCode(this.img_code.input.value);
+
+        if (isImgCode) {
+          this.button_code.disabled = {};
+        } else {
+          this.button_code.disabled = {disabled: 'disabled'};
+        }
+        if (isImgCode) {
+          this.img_code.input.class = 'success';
+        } else if (!isImgCode && (this.img_code.input.value.length === 6 || flag)) {
+          this.img_code.input.class = 'error';
+        } else {
+          this.img_code.input.class = 'focus';
+        }
+
+      },
+      //    获取图形验证码
+      getImgCode () {
+        var params = {};
+        var headers = {
+          headers: {
+            Authorization: '123456'
+          }
+        };
+
+        this.$http.post(CONSTANT.basic.URL + '/captcha/resetpwd', params, headers).then(response => {
+          var data = JSON.parse(response.body);
+
+          if (data.msgCode === 200) {
+            if (data.result.src) {
+              this.img_code.src = require(data.result.src);
+            }
+          } else {
+            Message({showClose: true, message: data.msg, type: 'error'});
+          }
+        }, response => {
+          Message({showClose: true, message: 'registcode error!', type: 'error'});
+          console.log('registcode error');
+        });
+      },
+      goBack () {
+        this.show = 'input';
+      },
+      sendPhoneCode () {
+        var params = {
+          mobile: this.phone_num.input.value,
+          captcha: this.img_code.input.value
+        };
+        var headers = {
+          headers: {
+            Authorization: '123456'
+          }
+        };
+
+        this.$http.post(CONSTANT.basic.URL + '/register/resetpwdcode', params, headers).then(response => {
+          var data = JSON.parse(response.body);
+
+          if (data.msgCode === 200) {
+            this.show = 'input';
+          } else {
+            Message({showClose: true, message: data.msg, type: 'error'});
+          }
+        }, response => {
+          Message({showClose: true, message: 'send phone code error!', type: 'error'});
+        });
+      },
+      commit () {
+        var params = {
+          mobile: this.phone_num.input.value,
+          password: AES.encrypt(this.password.input.value, CONSTANT.methods.AesKey('1234')).toString(),
+          verificationCode: this.code.input.value,
+          sid: '1234'
+        };
+        var headers = {
+          headers: {
+            Authorization: '123456'
+          }
+        };
+
+        this.$http.post(CONSTANT.basic.URL + '/register/resetpwd', params, headers).then(response => {
+          var data = JSON.parse(response.body);
+
+          if (data.msgCode === 200) {
+            this.show = 'success';
+          } else {
+            Message({showClose: true, message: data.msg, type: 'error'});
+          }
+        }, response => {
+          this.show = 'success';
+          Message({showClose: true, message: 'regist error!', type: 'error'});
+        });
+      },
+      goLogin () {
+        //   成功注册后马上登录
+        console.log('login now!');
       }
     }
   };
@@ -160,23 +339,86 @@
       margin: auto;
       padding-top: 10px;
       width:245px;
-      >.pro-input{
-          margin-bottom: 15px;
+      >.inputs{
+          >.pro-input{
+               margin-bottom: 15px;
           >.s-input-code{
-              >.input{
-                  >input{
-                      width: 65px;
-                  }
-              }
+          >.input{
+          >input{
+               width: 65px;
+           }
           }
+          }
+          }
+          >.pro-button{
+               margin-top: 40px;
+           }
+          >h3{
+               text-align: center;
+               color: rgb(102,102,102);
+               margin-bottom: 13px;
+           }
+          >p{
+               font-size: 14px;
+               margin-top: 24px;
+          >label{
+               color: #3a95de;
+               cursor: pointer;
+               margin-left: 27px;
+           }
+          >label:hover{
+               text-decoration: underline;
+           }
+          }
+       }
+  >.img-code{
+       color: #666;
+      >h3{
+           text-align: center;
+           margin-bottom: 12px;
+       }
+      >label{
+           font-size: 12px;
+           margin-bottom: 23px;
+           display: block;
+           text-align: center;
+       }
+      >div{
+           display: flex;
+      >img{
+           height: 30px;
+           width: 90px;
+           font-size: 14px;
+       }
+      >p{
+           line-height: 30px;
+           color: #333;
+           font-size: 14px;
+           padding-left: 10px;
+      >label{
+           color: #3a95de;
+           cursor: pointer;
+       }
+      >label:hover{
+           text-decoration: underline;
+       }
+      }
       }
       >.pro-button{
-          margin-top: 40px;
-      }
-      >h3{
-          text-align: center;
-          color: rgb(102,102,102);
-          margin-bottom: 13px;
-      }
+           margin-top: 20px;
+       }
+      >s{
+           color: #3a95de;
+           cursor: pointer;
+           display: inline-block;
+           font-size: 12px;
+           text-decoration: none;
+           margin-top:100px;
+       }
+      >s:hover{
+           text-decoration: underline;
+       }
+  }
+
   }
 </style>

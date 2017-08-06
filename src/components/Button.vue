@@ -1,6 +1,6 @@
 <template>
   <main class="pro-button">
-    <button v-bind="disabled" @click="click">{{label}}</button>
+    <button v-bind="disabled" @click="handleClick">{{label}}</button>
   </main>
 </template>
 
@@ -15,8 +15,12 @@
         type: String,
         default: 'test1'
       },
-      disabled: Object,
-      click: Function
+      disabled: Object
+    },
+    methods: {
+      handleClick (evt) {
+        this.$emit('click', evt);
+      }
     }
   };
 </script>

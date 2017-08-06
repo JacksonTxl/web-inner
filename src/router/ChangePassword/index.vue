@@ -1,9 +1,12 @@
 <template>
   <main class="change-password">
-      <s-input placeholder="输入当前登录密码" type="password" :isCode="false" :maxlength="16" :params="pre_password" @keyup="checkPsw(false,'pre_password')" v-model="pre_password.input.value" @focus="checkFocus('pre_password')" @blur="checkBlur('pre_password')"></s-input>
-      <s-input placeholder="密码由6-16个字符组成，区分大小写" type="password" :isCode="false" :maxlength="16" :params="new_password" @keyup="checkPsw(false,'new_password')" v-model="new_password.input.value" @focus="checkFocus('new_password')" @blur="checkBlur('new_password')"></s-input>
-      <s-input placeholder="再次输入新密码" type="password" :isCode="false" :maxlength="16" :params="confirm_password" @keyup="checkPsw(false,'confirm_password')" v-model="confirm_password.input.value" @focus="checkFocus('confirm_password')" @blur="checkBlur('confirm_password')"></s-input>
-      <s-button :disabled="button.disabled" :label="button.label"></s-button>
+      <div class="inputs" v-if="show=='input'">
+          <s-input placeholder="输入当前登录密码" type="password" :isCode="false" :maxlength="16" :params="pre_password" @keyup="checkPsw(false,'pre_password')" v-model="pre_password.input.value" @focus="checkFocus('pre_password')" @blur="checkBlur('pre_password')"></s-input>
+          <s-input placeholder="密码由6-16个字符组成，区分大小写" type="password" :isCode="false" :maxlength="16" :params="new_password" @keyup="checkPsw(false,'new_password')" v-model="new_password.input.value" @focus="checkFocus('new_password')" @blur="checkBlur('new_password')"></s-input>
+          <s-input placeholder="再次输入新密码" type="password" :isCode="false" :maxlength="16" :params="confirm_password" @keyup="checkPsw(false,'confirm_password')" v-model="confirm_password.input.value" @focus="checkFocus('confirm_password')" @blur="checkBlur('confirm_password')"></s-input>
+          <s-button :disabled="button.disabled" :label="button.label" @click="commit"></s-button>
+      </div>
+      <s-success v-if="show=='success'" :tips="success_tip.tips" :button="success_tip.button" @click="complete"></s-success>
   </main>
 </template>
 
@@ -11,6 +14,9 @@
   import Input from '../../components/Input.vue';
   import Button from '../../components/Button.vue';
   import CONSTANT from '../../util/constant';
+  import Success from '../../components/Success.vue';
+  import { Message } from 'element-ui';
+  import { AES } from 'crypto-js';
 
   export default {
 
@@ -19,6 +25,7 @@
 
 
       return {
+        show: 'input',
         pre_password: {
           required: true,
           label: '当前密码',
@@ -96,12 +103,24 @@
           disabled: {
             disabled: 'disabled'
           }
+        },
+        success_tip: {
+          tips: {
+            label: '修改密码成功!',
+            p: '您的登录账号：18201962479',
+            show: false
+          },
+          button: {
+            label: '完成',
+            disabled: {}
+          }
         }
       };
     },
     components: {
       SInput: Input,
-      SButton: Button
+      SButton: Button,
+      SSuccess: Success
     },
     methods: {
       checkFocus (param) {
@@ -159,6 +178,36 @@
           this.confirm_password.input.class = 'focus';
           this.confirm_password.tips.label = '';
         }
+      },
+      commit () {
+        var params = {
+          originalpwd: AES.encrypt(this.pre_password.input.value, CONSTANT.methods.AesKey('1234')).toString(),
+          newpwd: AES.encrypt(this.new_password.input.value, CONSTANT.methods.AesKey('1234')).toString()
+        };
+        var headers = {
+          headers: {
+            //  token + hashkey
+            Authorization: '123456'
+          }
+        };
+
+        this.$http.post(CONSTANT.basic.URL + '/register/execute', params, headers).then(response => {
+          var data = JSON.parse(response.body);
+
+          if (data.msgCode === 200) {
+            this.show = 'success';
+            this.success_tip.tips.p = '您的登录账号：' + data.result;
+          } else {
+            Message({showClose: true, message: data.msg, type: 'error'});
+          }
+        }, response => {
+          this.show = 'success';
+          Message({showClose: true, message: 'regist error!', type: 'error'});
+        });
+      },
+      complete () {
+        //   重置成功后关闭页面
+        console.log('login now!');
       }
     }
   };
@@ -168,9 +217,11 @@
       width:324px;
       margin: auto;
       padding-top: 36px;
-
-      >.pro-button{
-          margin-top: 40px;
+      >.inputs{
+            >.pro-button{
+               margin-top: 40px;
+            }
       }
+
   }
 </style>

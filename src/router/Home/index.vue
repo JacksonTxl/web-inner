@@ -1,11 +1,13 @@
 <template>
   <main>
-    <e-button :label="button.label" :disabled="button.disabled" :click="hello"></e-button>
+    <e-success @click="hello" :tips="tips" :button="button1"></e-success>
+    <e-button :label="button.label" :disabled="button.disabled" @click="hello"></e-button>
   </main>
 </template>
 
 <script>
   import Button from '../../components/Button.vue';
+  import Success from '../../components/Success.vue';
   import { AES, enc } from 'crypto-js';
 
   export default {
@@ -16,12 +18,24 @@
           disabled: {
 
           }
+        },
+        button1: {
+          label: '马上登录',
+          disabled: {
+
+          }
+        },
+        tips: {
+          label: '注册账号成功!',
+          p: '您的登录账号：18201962479',
+          show: true
         }
       };
 
     },
     components: {
-      EButton: Button
+      EButton: Button,
+      ESuccess: Success
     },
     methods: {
       hello () {
