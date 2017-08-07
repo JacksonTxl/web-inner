@@ -260,11 +260,11 @@
       //    失去焦点校验手机号是否注册
       checkPhoneIsRegister () {
         var params = {
-          identification: this.phone_num.input.value
+          identificationNumber: this.phone_num.input.value
         };
         var headers = {
           headers: {
-            Authorization: '123456'
+            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA'
           }
         };
 
@@ -286,20 +286,18 @@
         var params = {};
         var headers = {
           headers: {
-            Authorization: '123456'
+            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA1',
+            responseType: 'arraybuffer'
           }
         };
 
+        this.img_code.src = CONSTANT.basic.URL + '/captcha/registcode';
         this.$http.post(CONSTANT.basic.URL + '/captcha/registcode', params, headers).then(response => {
-          var data = JSON.parse(response.body);
+          var result = new Blob([response.body]);
 
-          if (data.msgCode === 200) {
-            if (data.result.src) {
-              this.img_code.src = require(data.result.src);
-            }
-          } else {
-            Message({showClose: true, message: data.msg, type: 'error'});
-          }
+          console.log(this.img_code.src);
+          console.log(window.URL.createObjectURL(result));
+          this.img_code.src = window.URL.createObjectURL(result);
         }, response => {
           Message({showClose: true, message: 'registcode error!', type: 'error'});
           console.log('registcode error');
