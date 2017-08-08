@@ -39,8 +39,8 @@ app.get('*', (req, res) => {
     res.end(html);
   });
 });
-app.use('/api/mmm', proxy('/api/mmm', {
-  target: 'http://localhost:8181/api/mmm/',
+app.use('/api/test', proxy('/api/test', {
+  target: 'http://192.168.1.125:10667/',
   changeOrigin: true
 }));
 app.listen(config.port, () => {

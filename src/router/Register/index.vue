@@ -286,7 +286,7 @@
         var params = {};
         var headers = {
           headers: {
-            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA1',
+            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA',
             responseType: 'arraybuffer'
           }
         };
@@ -310,11 +310,11 @@
         var params = {
           mobile: this.phone_num.input.value,
           captcha: this.img_code.input.value,
-          sid: '1234'
+          sid: CONSTANT.basic.SID
         };
         var headers = {
           headers: {
-            Authorization: '123456'
+            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA'
           }
         };
 
@@ -335,11 +335,11 @@
           mobile: this.phone_num.input.value,
           password: AES.encrypt(this.password.input.value, CONSTANT.methods.AesKey('1234')).toString(),
           verificationCode: this.code.input.value,
-          sid: '1234'
+          sid: CONSTANT.basic.SID
         };
         var headers = {
           headers: {
-            Authorization: '123456'
+            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA'
           }
         };
 

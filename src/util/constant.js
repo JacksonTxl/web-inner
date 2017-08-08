@@ -1,6 +1,7 @@
 export default {
   basic: {
-    URL: location.origin + '/api/test/'
+    URL: location.origin + '/api/test/',
+    SID: 'SIMBA'
   },
   regexp: {
     // 校验手机号的正则
@@ -43,6 +44,40 @@ export default {
         return JSON.stringify(value) + zero;
       }
     }
+  },
+  JsonFormatter: {
+      stringify: function (cipherParams) {
+          // create json object with ciphertext
+          var jsonObj = {
+              ct: cipherParams.ciphertext.toString(CryptoJS.enc.Hex)
+          };
+          // optionally add iv and salt
+          if (cipherParams.iv) {
+              jsonObj.iv = cipherParams.iv.toString();
+          }
+          if (cipherParams.salt) {
+              jsonObj.s = cipherParams.salt.toString();
+          }
+
+          // stringify json object
+          return JSON.stringify(jsonObj);
+      },
+      parse: function (jsonStr) {
+          // parse json string
+          var jsonObj = JSON.parse(jsonStr);
+          // extract ciphertext from json object, and create cipher params object
+          var cipherParams = CryptoJS.lib.CipherParams.create({
+              ciphertext: CryptoJS.enc.Hex.parse(jsonObj.ct)
+          });
+          // optionally extract iv and salt
+          if (jsonObj.iv) {
+              cipherParams.iv = CryptoJS.enc.Hex.parse(jsonObj.iv)
+          }
+          if (jsonObj.s) {
+              cipherParams.salt = CryptoJS.enc.Hex.parse(jsonObj.s)
+          }
+          return cipherParams;
+      }
   }
 
 };
