@@ -3,7 +3,7 @@
       <div class="inputs" v-if="show=='input'">
           <h3>注册账号</h3>
           <s-input placeholder="手机号" type="text" :isCode="false" :maxlength="11" :params="phone_num" @keyup="checkPhone(false,'phone')" v-model="phone_num.input.value" @focus="checkFocus('phone')" @blur="checkBlur('phone')"></s-input>
-          <s-input placeholder="验证码" type="text" :isCode="true" :maxlength="4" :params="code" @keyup="checkPhone(false,'code')" v-model="code.input.value" @focus="checkFocus('code')" @blur="checkBlur('code')"></s-input>
+          <s-input placeholder="验证码" type="text" :isCode="true" :maxlength="6" :params="code" @keyup="checkPhone(false,'code')" v-model="code.input.value" @focus="checkFocus('code')" @blur="checkBlur('code')"></s-input>
           <s-input placeholder="新密码,6~16个字符,不含空格" type="password" :isCode="false" :maxlength="16" :params="password" @keyup="checkPhone(false,'password')" v-model="password.input.value" @focus="checkFocus('password')" @blur="checkBlur('password')"></s-input>
           <s-button :disabled="button.disabled" :label="button.label" @click="commit"></s-button>
           <p>已有账号？<label>返回登录</label></p>
@@ -16,7 +16,7 @@
              <img :src="img_code.src" alt="图形验证码">
              <p>看不清？<label @click="getImgCode">换一张</label></p>
           </div>
-          <s-button :disabled="button_code.disabled" :label="button_code.label" @click="goBack"></s-button>
+          <s-button :disabled="button_code.disabled" :label="button_code.label" @click="sendPhoneCode"></s-button>
           <s @click="goBack">返回</s>
       </div>
       <s-success v-if="show=='success'" :tips="success_tip.tips" :button="success_tip.button" @click="goLogin"></s-success>
@@ -92,7 +92,7 @@
                 if (time <= 0) {
                   clearInterval(_this.code.code.interval);
                   _this.code.code.disabled = {};
-                  _this.code.code.label = time + '获取验证码';
+                  _this.code.code.label = '获取验证码';
                 }
               }, 1000);
 
@@ -227,7 +227,7 @@
         }
         if (isCode && type === 'code') {
           this.code.input.class = 'success';
-        } else if (!isCode && (this.code.input.value.length === 4 || flag) && type === 'code') {
+        } else if (!isCode && (this.code.input.value.length === 6 || flag) && type === 'code') {
           this.code.input.class = 'error';
         } else if (type === 'code') {
           this.code.input.class = 'focus';
@@ -264,49 +264,56 @@
         };
         var headers = {
           headers: {
-            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA'
+            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
           }
         };
 
         this.$http.post(CONSTANT.basic.URL + '/register/verify', params, headers).then(response => {
-          var data = JSON.parse(response.body);
+          response.text().then(function (value) {
+            var data = JSON.parse(value);
 
-          if (data.msgCode === 200) {
-            Message({showClose: true, message: '手机尚未被注册，可以使用', type: 'success'});
-          } else {
-            Message({showClose: true, message: data.msg, type: 'error'});
-          }
+            if (data.msgCode === 200 && !data.result) {
+              console.log('手机尚未被注册，可以使用!');
+            } else if (data.msgCode === 200 && data.result) {
+              Message({showClose: true, message: CONSTANT.tips.CHECKREGISTERPHONE_USED, type: 'error'});
+            } else {
+              Message({showClose: true, message: data.msg || CONSTANT.tips.CHECKREGISTERPHONE_USED, type: 'error'});
+            }
+          });
         }, response => {
-          Message({showClose: true, message: 'System error!', type: 'error'});
-          console.log('error');
+          Message({showClose: true, message: CONSTANT.tips.CHECKREGISTERPHONE_FAIL, type: 'error'});
         });
       },
       //    获取图形验证码
       getImgCode () {
+        var _this = this;
         var params = {};
         var headers = {
           headers: {
-            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA',
-            responseType: 'arraybuffer'
+            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA'
           }
         };
 
-        this.img_code.src = CONSTANT.basic.URL + '/captcha/registcode';
-        this.$http.post(CONSTANT.basic.URL + '/captcha/registcode', params, headers).then(response => {
-          var result = new Blob([response.body]);
+        this.$http.post(CONSTANT.basic.URL + '/captcha/registcode', JSON.stringify(params), headers).then(response => {
+          response.text().then(function (value) {
+            var data = JSON.parse(value);
 
-          console.log(this.img_code.src);
-          console.log(window.URL.createObjectURL(result));
-          this.img_code.src = window.URL.createObjectURL(result);
+            if (data.msgCode === 200) {
+              _this.img_code.src = data.result;
+            } else {
+              Message({showClose: true, message: data.msg || CONSTANT.tips.IMGCODE_FAIL, type: 'error'});
+            }
+          });
         }, response => {
-          Message({showClose: true, message: 'registcode error!', type: 'error'});
-          console.log('registcode error');
+          Message({showClose: true, message: CONSTANT.tips.IMGCODE_FAIL, type: 'error'});
         });
       },
       goBack () {
         this.show = 'input';
       },
       sendPhoneCode () {
+        var _this = this;
         var params = {
           mobile: this.phone_num.input.value,
           captcha: this.img_code.input.value,
@@ -314,23 +321,28 @@
         };
         var headers = {
           headers: {
-            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA'
+            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
           }
         };
 
         this.$http.post(CONSTANT.basic.URL + '/register/sendcode', params, headers).then(response => {
-          var data = JSON.parse(response.body);
+          response.text().then(function (value) {
+            var data = JSON.parse(value);
 
-          if (data.msgCode === 200) {
-            this.show = 'input';
-          } else {
-            Message({showClose: true, message: data.msg, type: 'error'});
-          }
+            if (data.msgCode === 200) {
+              _this.show = 'input';
+              Message({showClose: true, message: CONSTANT.tips.SENDPHONECODE_SUCCESS, type: 'success'});
+            } else {
+              Message({showClose: true, message: data.msg || CONSTANT.tips.SENDPHONECODE_FAIL, type: 'error'});
+            }
+          });
         }, response => {
-          Message({showClose: true, message: 'send phone code error!', type: 'error'});
+          Message({showClose: true, message: CONSTANT.tips.SENDPHONECODE_FAIL, type: 'error'});
         });
       },
       commit () {
+        var _this = this;
         var params = {
           mobile: this.phone_num.input.value,
           password: AES.encrypt(this.password.input.value, CONSTANT.methods.AesKey('1234')).toString(),
@@ -339,21 +351,23 @@
         };
         var headers = {
           headers: {
-            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA'
+            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
           }
         };
 
         this.$http.post(CONSTANT.basic.URL + '/register/execute', params, headers).then(response => {
-          var data = JSON.parse(response.body);
+          response.text().then(function (value) {
+            var data = JSON.parse(value);
 
-          if (data.msgCode === 200) {
-            this.show = 'success';
-            this.success_tip.tips.p = '您的登录账号：' + data.result;
-          } else {
-            Message({showClose: true, message: data.msg, type: 'error'});
-          }
+            if (data.msgCode === 200) {
+              _this.show = 'success';
+              _this.success_tip.tips.p = '您的登录账号：' + data.result;
+            } else {
+              Message({showClose: true, message: data.msg, type: 'error'});
+            }
+          });
         }, response => {
-          this.show = 'success';
           Message({showClose: true, message: 'regist error!', type: 'error'});
         });
       },

@@ -7,8 +7,17 @@ export default {
     // 校验手机号的正则
     PHONE: /^1[34578]\d{9}$/
   },
-  url: {
-
+  tips: {
+    // 获取图形验证码出错
+    IMGCODE_SUCCESS: '获取图形验证码成功！',
+    IMGCODE_FAIL: '获取图形验证码失败！',
+    SENDPHONECODE_SUCCESS: '手机验证码发送成功！',
+    SENDPHONECODE_FAIL: '手机验证码发送失败！',
+    RESTPASSWORD_SUCCESS: '重置密码成功！',
+    RESTPASSWORD_FAIL: '重置密码失败！',
+    CHANGEPASSWORD_FAIL: '修改密码失败！',
+    CHECKREGISTERPHONE_USED: '手机号码已被注册！',
+    CHECKREGISTERPHONE_FAIL: '注册失败！',
   },
   methods: {
     //  校验手机号码返回结果
@@ -18,8 +27,8 @@ export default {
     },
     //  校验验证码返回结果
     checkPhoneCode (value) {
-      if (!value && value.length != 4) return;
-      return /^\d{4}$/.test(value);
+      if (!value && value.length != 6) return;
+      return /^\d{6}$/.test(value);
     },
     //  检验输入密码6~16位，不包含空格
     checkPsw (value) {

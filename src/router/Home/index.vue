@@ -76,7 +76,8 @@
           }
         var pwd =  CryptoJS.enc.Hex.parse("CLrcoE0000000000");//密码必须用Hex或其他方式处理为byte数组，如果直接使用字符串，CryptoJS会用加盐的方法重新生成密码，而且加的盐是随机数，这样在java端就没法解秘了。
         var iv = CryptoJS.enc.Hex.parse('CLrcoE0000000000');//iv在java中必须为16byte长，所以js中也必须设置为相同的长度，否则加密后的结果在java中无法解密。
-        var setting={iv:iv,
+        var setting={
+            iv:iv,
             //mode:CryptoJS.mode.CBC, //默认值，可以不设置
             //padding:CryptoJS.pad.Pkcs7,//同上
             format: JsonFormatter};

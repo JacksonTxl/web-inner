@@ -180,33 +180,34 @@
         }
       },
       commit () {
+        var _this = this;
         var params = {
           originalpwd: AES.encrypt(this.pre_password.input.value, CONSTANT.methods.AesKey('1234')).toString(),
           newpwd: AES.encrypt(this.new_password.input.value, CONSTANT.methods.AesKey('1234')).toString()
         };
         var headers = {
           headers: {
-            //  token + hashkey
-            Authorization: '123456'
+            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
           }
         };
 
         this.$http.post(CONSTANT.basic.URL + '/register/execute', params, headers).then(response => {
-          var data = JSON.parse(response.body);
+          response.text().then(function (value) {
+            var data = JSON.parse(value);
 
-          if (data.msgCode === 200) {
-            this.show = 'success';
-            this.success_tip.tips.p = '您的登录账号：' + data.result;
-          } else {
-            Message({showClose: true, message: data.msg, type: 'error'});
-          }
+            if (data.msgCode === 200) {
+              _this.show = 'success';
+            } else {
+              Message({showClose: true, message: data.msg || CONSTANT.tips.CHANGEPASSWORD_FAIL, type: 'error'});
+            }
+          });
         }, response => {
-          this.show = 'success';
-          Message({showClose: true, message: 'regist error!', type: 'error'});
+          Message({showClose: true, message: CONSTANT.tips.CHANGEPASSWORD_FAIL, type: 'error'});
         });
       },
       complete () {
-        //   重置成功后关闭页面
+        //   修改成功后关闭页面
         console.log('login now!');
       }
     }
