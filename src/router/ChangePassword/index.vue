@@ -16,7 +16,6 @@
   import CONSTANT from '../../util/constant';
   import Success from '../../components/Success.vue';
   import { Message } from 'element-ui';
-  import { AES } from 'crypto-js';
 
   export default {
 
@@ -26,6 +25,7 @@
 
       return {
         show: 'input',
+        identification: 66468175,
         pre_password: {
           required: true,
           label: '当前密码',
@@ -182,17 +182,17 @@
       commit () {
         var _this = this;
         var params = {
-          originalpwd: AES.encrypt(this.pre_password.input.value, CONSTANT.methods.AesKey('1234')).toString(),
-          newpwd: AES.encrypt(this.new_password.input.value, CONSTANT.methods.AesKey('1234')).toString()
+          originalpwd: CONSTANT.methods.OutAes(this.pre_password.input.value, this.identification, this.identification, 'encrypt'),
+          newpwd: CONSTANT.methods.OutAes(this.new_password.input.value, this.identification, this.identification, 'encrypt')
         };
         var headers = {
           headers: {
-            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA',
+            Authorization: 'a0eqvt2qxvcfs7zv|552AE6B8C918FD7275F8807CFB4E4EAE',
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
           }
         };
 
-        this.$http.post(CONSTANT.basic.URL + '/register/execute', params, headers).then(response => {
+        this.$http.post(CONSTANT.basic.URL + '/register/updatepwd', params, headers).then(response => {
           response.text().then(function (value) {
             var data = JSON.parse(value);
 

@@ -1,7 +1,7 @@
 <template>
   <main>
     <e-success @click="hello" :tips="tips" :button="button1"></e-success>
-    <e-button :label="button.label" :disabled="button.disabled" @click="hello"></e-button>
+    <e-button :label="button.label" :disabled="button.disabled" @click="hello2"></e-button>
   </main>
 </template>
 
@@ -80,7 +80,8 @@
             iv:iv,
             //mode:CryptoJS.mode.CBC, //默认值，可以不设置
             //padding:CryptoJS.pad.Pkcs7,//同上
-            format: JsonFormatter};
+            format: JsonFormatter
+        };
         var mi=CryptoJS.AES.encrypt('123456',pwd, setting);
           mi=JSON.parse(mi.toString());//mi本身是个对象，而且内部属性循环引用，所以不用直接用JSON处理，需要先toString()。因为我们设置过format，所以得到一个son字符串，这样可以获得密文和iv。
 //          args.data=mi.ct;
@@ -94,8 +95,33 @@
 //
 //        console.log(ciphertext.toString());
 //        console.log(plaintext);
+      },
+      hello1 () {
+          var key = CryptoJS.enc.Utf8.parse("CLrcoE0000000000");
+          var iv = CryptoJS.enc.Utf8.parse('CLrcoE0000000000');
+          function Encrypt(word){
+              var srcs = CryptoJS.enc.Utf8.parse(word);
+              var encrypted = CryptoJS.AES.encrypt(srcs, key, { iv: iv,mode:CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7});
+              return encrypted.ciphertext.toString().toUpperCase();
+          }
+          function Decrypt(word){
+              var encryptedHexStr = CryptoJS.enc.Hex.parse(word);
+              var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
+              var decrypt = CryptoJS.AES.decrypt(srcs, key, { iv: iv,mode:CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7});
+              var decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
+              return decryptedStr.toString();
+          }
+          var mm = Encrypt('123456');
+          console.log(mm);
+          var jm = Decrypt(mm);
+          console.log(jm)
+      },
+      hello2(){
+          var m = CONSTANT.methods.OutAes('123456','CLrcoE','CLrcoE','encrypt');
+          console.log(m);
       }
     }
+
   };
 </script>
 <style lang="scss" scoped>

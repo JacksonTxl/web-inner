@@ -29,7 +29,6 @@
   import Success from '../../components/Success.vue';
   import CONSTANT from '../../util/constant';
   import { Message } from 'element-ui';
-  import { AES } from 'crypto-js';
 
   export default {
 
@@ -61,6 +60,7 @@
           }
         },
         code: {
+          identification: '',
           required: true,
           label: '',
           endpic: {
@@ -332,6 +332,7 @@
 
             if (data.msgCode === 200) {
               _this.show = 'input';
+              _this.code.identification = data.result;
               Message({showClose: true, message: CONSTANT.tips.SENDPHONECODE_SUCCESS, type: 'success'});
             } else {
               Message({showClose: true, message: data.msg || CONSTANT.tips.SENDPHONECODE_FAIL, type: 'error'});
@@ -345,7 +346,7 @@
         var _this = this;
         var params = {
           mobile: this.phone_num.input.value,
-          password: AES.encrypt(this.password.input.value, CONSTANT.methods.AesKey('1234')).toString(),
+          password: CONSTANT.methods.OutAes(this.password.input.value, this.code.identification, this.code.identification, 'encrypt'),
           verificationCode: this.code.input.value,
           sid: CONSTANT.basic.SID
         };

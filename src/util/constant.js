@@ -1,3 +1,43 @@
+//  补齐校验的位数 返回16加密密文
+function AesKey (value) {
+    if (!value) return;
+    if (value && value.length <= 16) {
+        var num = 16 - value.length;
+        var zero = '';
+
+        for(var i = 0; i < num; i++){
+            zero += '0';
+        }
+        return value + zero;
+    }
+}
+function AesFun (data, key, iv, type){
+    var CryptoJS = require('crypto-js');
+    var key = CryptoJS.enc.Utf8.parse(AesKey(key));
+    var iv = CryptoJS.enc.Utf8.parse(AesKey(iv));
+    function Encrypt(word){
+        var srcs = CryptoJS.enc.Utf8.parse(word);
+        var encrypted = CryptoJS.AES.encrypt(srcs, key, { iv: iv,mode:CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7});
+        return encrypted.ciphertext.toString().toUpperCase();
+    }
+    function Decrypt(word){
+        var encryptedHexStr = CryptoJS.enc.Hex.parse(word);
+        var srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
+        var decrypt = CryptoJS.AES.decrypt(srcs, key, { iv: iv,mode:CryptoJS.mode.CBC,padding: CryptoJS.pad.Pkcs7});
+        var decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
+        return decryptedStr.toString();
+    }
+
+    // var mm = Encrypt('123456');
+    // console.log(mm);
+    // var jm = Decrypt(mm);
+    // console.log(jm)
+    if (type === 'encrypt') {
+      return Encrypt(data);
+    } else {
+      return Decrypt(data)
+    }
+}
 export default {
   basic: {
     URL: location.origin + '/api/test/',
@@ -40,53 +80,9 @@ export default {
       if (!value && value.length != 6) return;
       return /^([A-Za-z0-9]+){6}$/.test(value);
     },
-    //  补齐校验的位数 返回16加密密文
-    AesKey (value) {
-      if (!value) return;
-      if (value && value.length <= 16) {
-        var num = 16 - value.length;
-        var zero = '';
-
-        for(var i = 0; i < num; i++){
-          zero += '0';
-        }
-        return JSON.stringify(value) + zero;
-      }
+    OutAes (data, key, iv, type) {
+      return AesFun(data, key, iv, type);
     }
-  },
-  JsonFormatter: {
-      stringify: function (cipherParams) {
-          // create json object with ciphertext
-          var jsonObj = {
-              ct: cipherParams.ciphertext.toString(CryptoJS.enc.Hex)
-          };
-          // optionally add iv and salt
-          if (cipherParams.iv) {
-              jsonObj.iv = cipherParams.iv.toString();
-          }
-          if (cipherParams.salt) {
-              jsonObj.s = cipherParams.salt.toString();
-          }
-
-          // stringify json object
-          return JSON.stringify(jsonObj);
-      },
-      parse: function (jsonStr) {
-          // parse json string
-          var jsonObj = JSON.parse(jsonStr);
-          // extract ciphertext from json object, and create cipher params object
-          var cipherParams = CryptoJS.lib.CipherParams.create({
-              ciphertext: CryptoJS.enc.Hex.parse(jsonObj.ct)
-          });
-          // optionally extract iv and salt
-          if (jsonObj.iv) {
-              cipherParams.iv = CryptoJS.enc.Hex.parse(jsonObj.iv)
-          }
-          if (jsonObj.s) {
-              cipherParams.salt = CryptoJS.enc.Hex.parse(jsonObj.s)
-          }
-          return cipherParams;
-      }
   }
 
 };
