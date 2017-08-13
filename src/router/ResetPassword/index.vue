@@ -36,6 +36,7 @@
       document.title = '重置密码';
       return {
         show: 'input',
+        aotClientInfo: '',
         phone_num: {
           required: true,
           label: '',
@@ -254,86 +255,131 @@
       //    获取图形验证码
       getImgCode () {
         var _this = this;
-        var params = {};
-        var headers = {
-          headers: {
-            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA'
-          }
-        };
 
-        this.$http.post(CONSTANT.basic.URL + '/captcha/resetpwd', params, headers).then(response => {
-          response.text().then(function (value) {
-            var data = JSON.parse(value);
-
-            if (data.msgCode === 200) {
-              _this.img_code.src = data.result;
-            } else {
-              Message({showClose: true, message: data.msg || CONSTANT.tips.IMGCODE_FAIL, type: 'error'});
-            }
+        if (_this.aotClientInfo) {
+          getImgCodeInternal(_this.aotClientInfo);
+        } else {
+          CONSTANT.sdk.getClientInfo().then(function (data) {
+            _this.aotClientInfo = data;
+            getImgCodeInternal(data);
+            console.log(data);
+          }, function (error) {
+            console.log(error);
           });
-        }, response => {
-          Message({showClose: true, message: CONSTANT.tips.IMGCODE_FAIL, type: 'error'});
-        });
+        }
+        function getImgCodeInternal (param) {
+          var params = {};
+          var headers = {
+            headers: {
+              Authorization: param.clientInfo || 'Windows^7.0^1.0.1^ABCDEFG^SIMBA'
+            }
+          };
+
+          _this.$http.post(CONSTANT.basic.URL + '/captcha/resetpwd', params, headers).then(response => {
+            response.text().then(function (value) {
+              var data = JSON.parse(value);
+
+              if (data.msgCode === 200) {
+                _this.img_code.src = data.result;
+              } else {
+                Message({showClose: true, message: data.msg || CONSTANT.tips.IMGCODE_FAIL, type: 'error'});
+              }
+            });
+          }, response => {
+            Message({showClose: true, message: CONSTANT.tips.IMGCODE_FAIL, type: 'error'});
+          });
+        }
+
       },
       goBack () {
         this.show = 'input';
       },
       sendPhoneCode () {
         var _this = this;
-        var params = {
-          mobile: this.phone_num.input.value,
-          captcha: this.img_code.input.value
-        };
-        var headers = {
-          headers: {
-            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-          }
-        };
 
-        this.$http.post(CONSTANT.basic.URL + '/register/resetpwdcode', params, headers).then(response => {
-          response.text().then(function (value) {
-            var data = JSON.parse(value);
-
-            if (data.msgCode === 200) {
-              _this.show = 'input';
-              _this.code.identification = data.result;
-              Message({showClose: true, message: CONSTANT.tips.SENDPHONECODE_SUCCESS, type: 'success'});
-            } else {
-              Message({showClose: true, message: data.msg || CONSTANT.tips.SENDPHONECODE_FAIL, type: 'error'});
-            }
+        if (_this.aotClientInfo) {
+          sendPhoneCodeInternal(_this.aotClientInfo);
+        } else {
+          CONSTANT.sdk.getClientInfo().then(function (data) {
+            _this.aotClientInfo = data;
+            sendPhoneCodeInternal(data);
+            console.log(data);
+          }, function (error) {
+            console.log(error);
           });
-        }, response => {
-          Message({showClose: true, message: CONSTANT.tips.SENDPHONECODE_FAIL, type: 'error'});
-        });
+        }
+        function sendPhoneCodeInternal (param) {
+          var params = {
+            mobile: _this.phone_num.input.value,
+            captcha: _this.img_code.input.value
+          };
+          var headers = {
+            headers: {
+              Authorization: param.clientInfo || 'Windows^7.0^1.0.1^ABCDEFG^SIMBA',
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            }
+          };
+
+          _this.$http.post(CONSTANT.basic.URL + '/register/resetpwdcode', params, headers).then(response => {
+            response.text().then(function (value) {
+              var data = JSON.parse(value);
+
+              if (data.msgCode === 200) {
+                _this.show = 'input';
+                _this.code.identification = data.result;
+                Message({showClose: true, message: CONSTANT.tips.SENDPHONECODE_SUCCESS, type: 'success'});
+              } else {
+                Message({showClose: true, message: data.msg || CONSTANT.tips.SENDPHONECODE_FAIL, type: 'error'});
+              }
+            });
+          }, response => {
+            Message({showClose: true, message: CONSTANT.tips.SENDPHONECODE_FAIL, type: 'error'});
+          });
+        }
+
       },
       commit () {
         var _this = this;
-        var params = {
-          mobile: this.phone_num.input.value,
-          password: CONSTANT.methods.OutAes(this.password.input.value, this.code.identification, this.code.identification, 'encrypt'),
-          verificationCode: this.code.input.value
-        };
-        var headers = {
-          headers: {
-            Authorization: 'Windows^7.0^1.0.1^ABCDEFG^SIMBA',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-          }
-        };
 
-        this.$http.post(CONSTANT.basic.URL + '/register/resetpwd', params, headers).then(response => {
-          response.text().then(function (value) {
-            var data = JSON.parse(value);
-
-            if (data.msgCode === 200) {
-              _this.show = 'success';
-            } else {
-              Message({showClose: true, message: data.msg || CONSTANT.tips.RESTPASSWORD_FAIL, type: 'error'});
-            }
+        if (_this.aotClientInfo) {
+          commitInternal(_this.aotClientInfo);
+        } else {
+          CONSTANT.sdk.getClientInfo().then(function (data) {
+            _this.aotClientInfo = data;
+            commitInternal(data);
+            console.log(data);
+          }, function (error) {
+            console.log(error);
           });
-        }, response => {
-          Message({showClose: true, message: CONSTANT.tips.RESTPASSWORD_FAIL, type: 'error'});
-        });
+        }
+        function commitInternal (param) {
+          var params = {
+            mobile: _this.phone_num.input.value,
+            password: CONSTANT.methods.OutAes(_this.password.input.value, _this.code.identification, _this.code.identification, 'encrypt'),
+            verificationCode: _this.code.input.value
+          };
+          var headers = {
+            headers: {
+              Authorization: param.clientInfo || 'Windows^7.0^1.0.1^ABCDEFG^SIMBA',
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            }
+          };
+
+          _this.$http.post(CONSTANT.basic.URL + '/register/resetpwd', params, headers).then(response => {
+            response.text().then(function (value) {
+              var data = JSON.parse(value);
+
+              if (data.msgCode === 200) {
+                _this.show = 'success';
+              } else {
+                Message({showClose: true, message: data.msg || CONSTANT.tips.RESTPASSWORD_FAIL, type: 'error'});
+              }
+            });
+          }, response => {
+            Message({showClose: true, message: CONSTANT.tips.RESTPASSWORD_FAIL, type: 'error'});
+          });
+        }
+
       },
       goLogin () {
         //   重置密码成功

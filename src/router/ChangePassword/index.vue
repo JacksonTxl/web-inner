@@ -25,6 +25,7 @@
 
       return {
         show: 'input',
+        aotUserInfo: '',
         identification: 66468175,
         pre_password: {
           required: true,
@@ -181,34 +182,53 @@
       },
       commit () {
         var _this = this;
-        var params = {
-          originalpwd: CONSTANT.methods.OutAes(this.pre_password.input.value, this.identification, this.identification, 'encrypt'),
-          newpwd: CONSTANT.methods.OutAes(this.new_password.input.value, this.identification, this.identification, 'encrypt')
-        };
-        var headers = {
-          headers: {
-            Authorization: 'a0eqvt2qxvcfs7zv|552AE6B8C918FD7275F8807CFB4E4EAE',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-          }
-        };
 
-        this.$http.post(CONSTANT.basic.URL + '/register/updatepwd', params, headers).then(response => {
-          response.text().then(function (value) {
-            var data = JSON.parse(value);
-
-            if (data.msgCode === 200) {
-              _this.show = 'success';
-            } else {
-              Message({showClose: true, message: data.msg || CONSTANT.tips.CHANGEPASSWORD_FAIL, type: 'error'});
-            }
+        if (_this.aotUserInfo) {
+          commitInternal(_this.aotUserInfo);
+        } else {
+          CONSTANT.sdk.getClientInfo().then(function (data) {
+            _this.aotUserInfo = data;
+            commitInternal(data);
+            console.log(data);
+          }, function (error) {
+            console.log(error);
           });
-        }, response => {
-          Message({showClose: true, message: CONSTANT.tips.CHANGEPASSWORD_FAIL, type: 'error'});
-        });
+        }
+        function commitInternal (param) {
+          var params = {
+            originalpwd: CONSTANT.methods.OutAes(_this.pre_password.input.value, param.userId || _this.identification, param.userId || _this.identification, 'encrypt'),
+            newpwd: CONSTANT.methods.OutAes(_this.new_password.input.value, param.userId || _this.identification, param.userId || _this.identification, 'encrypt')
+          };
+          var headers = {
+            headers: {
+              Authorization: param.token + '|' + param.hashKey,
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            }
+          };
+
+          _this.$http.post(CONSTANT.basic.URL + '/register/updatepwd', params, headers).then(response => {
+            response.text().then(function (value) {
+              var data = JSON.parse(value);
+
+              if (data.msgCode === 200) {
+                _this.show = 'success';
+              } else {
+                Message({showClose: true, message: data.msg || CONSTANT.tips.CHANGEPASSWORD_FAIL, type: 'error'});
+              }
+            });
+          }, response => {
+            Message({showClose: true, message: CONSTANT.tips.CHANGEPASSWORD_FAIL, type: 'error'});
+          });
+        }
+
       },
       complete () {
         //   修改成功后关闭页面
-        console.log('login now!');
+        CONSTANT.sdk.closeWindow().then(function (data) {
+          console.log(data);
+        }, function (error) {
+          console.log(error);
+        });
       }
     }
   };

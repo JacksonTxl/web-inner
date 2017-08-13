@@ -83,6 +83,54 @@ export default {
     OutAes (data, key, iv, type) {
       return AesFun(data, key, iv, type);
     }
+  },
+  sdk: {
+    getUserInfo (accNbr) {
+      var data = accNbr ? {userId: accNbr} : '';
+      return new Promise(function (resolve, reject) {
+        sdk.getUserInfo({
+          data: data,
+          error: function (err) {
+            console.log("error: " + JSON.stringify(err));
+            reject(err);
+          },
+          success: function (data) {
+            console.log("success: " + JSON.stringify(data));
+            resolve(data);
+          }
+        });
+      })
+    },
+    getClientInfo (accNbr) {
+      var data = accNbr ? '' : {userId: accNbr};
+      return new Promise(function (resolve, reject) {
+        sdk.getClientInfo({
+          data: data,
+          error: function (err) {
+            console.log("error: " + JSON.stringify(err));
+            reject(err);
+          },
+          success: function (data) {
+            console.log("success: " + JSON.stringify(data));
+            resolve(data);
+          }
+        });
+      })
+    },
+    closeWindow () {
+      return new Promise(function (resolve, reject) {
+        sdk.closeWindow({
+          error: function (err) {
+            console.log("error: " + JSON.stringify(err));
+            reject(err);
+          },
+          success: function (data) {
+            console.log("success: " + JSON.stringify(data));
+            resolve(data);
+          }
+        });
+      })
+    }
   }
 
 };

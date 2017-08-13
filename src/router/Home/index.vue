@@ -1,7 +1,7 @@
 <template>
   <main>
     <e-success @click="hello" :tips="tips" :button="button1"></e-success>
-    <e-button :label="button.label" :disabled="button.disabled" @click="hello2"></e-button>
+    <e-button :label="button.label" :disabled="button.disabled" @click="getUserInfo"></e-button>
   </main>
 </template>
 
@@ -119,6 +119,13 @@
       hello2(){
           var m = CONSTANT.methods.OutAes('123456','CLrcoE','CLrcoE','encrypt');
           console.log(m);
+      },
+      getUserInfo () {
+        CONSTANT.sdk.getUserInfo().then(function (data) {
+          console.log(data);
+        }, function (error) {
+          console.log(error);
+        })
       }
     }
 
