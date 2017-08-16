@@ -40,7 +40,7 @@ function AesFun (data, key, iv, type){
 }
 export default {
   basic: {
-    URL: location.origin + '/api/test/',
+    URL: location.origin + '/api/inner/',
     SID: 'SIMBA'
   },
   regexp: {
@@ -120,6 +120,23 @@ export default {
     closeWindow () {
       return new Promise(function (resolve, reject) {
         sdk.closeWindow({
+          error: function (err) {
+            console.log("error: " + JSON.stringify(err));
+            reject(err);
+          },
+          success: function (data) {
+            console.log("success: " + JSON.stringify(data));
+            resolve(data);
+          }
+        });
+      })
+    }
+  },
+  psdk: {
+    loginClient (data) {
+      return new Promise(function (resolve, reject) {
+        psdk.loginClient({
+          data: data,
           error: function (err) {
             console.log("error: " + JSON.stringify(err));
             reject(err);

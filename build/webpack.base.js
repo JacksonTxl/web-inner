@@ -12,7 +12,8 @@ module.exports = {
   output: {
     path: path.join(__dirname, '../dist'),
     filename: '[name].js',
-    publicPath: './'
+    publicPath: './',
+
   },
   resolve: {
     extensions: ['.js', '.vue', '.css', '.json'],
@@ -37,7 +38,13 @@ module.exports = {
       },
       {
         test: /\.(ico|jpg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
-        use: 'file-loader?limit=8192'
+        use: [{
+          loader: 'file-loader?limit=8192',
+          options: {
+            name: 'images/[hash].[ext]',
+            // outputPath: 'images'  [path] []
+          }
+        }]
       },
       {
         test: /\.scss$/,

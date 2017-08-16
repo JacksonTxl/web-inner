@@ -6,7 +6,7 @@
           <s-input placeholder="验证码" type="text" :isCode="true" :maxlength="6" :params="code" @keyup="checkPhone(false,'code')" v-model="code.input.value" @focus="checkFocus('code')" @blur="checkBlur('code')"></s-input>
           <s-input placeholder="新密码,6~16个字符,不含空格" type="password" :isCode="false" :maxlength="16" :params="password" @keyup="checkPhone(false,'password')" v-model="password.input.value" @focus="checkFocus('password')" @blur="checkBlur('password')"></s-input>
           <s-button :disabled="button.disabled" :label="button.label" @click="commit"></s-button>
-          <p>已有账号？<label>返回登录</label></p>
+          <p>已有账号？<label @click="goLogin">返回登录</label></p>
       </div>
       <div class="img-code" v-if="show=='code'">
           <h3>输入图形验证码</h3>
@@ -19,7 +19,7 @@
           <s-button :disabled="button_code.disabled" :label="button_code.label" @click="sendPhoneCode"></s-button>
           <s @click="goBack">返回</s>
       </div>
-      <s-success v-if="show=='success'" :tips="success_tip.tips" :button="success_tip.button" @click="goLogin"></s-success>
+      <s-success v-if="show=='success'" :tips="success_tip.tips" :button="success_tip.button" @click="goLogin('gologin')"></s-success>
   </main>
 </template>
 
@@ -381,9 +381,25 @@
         }
 
       },
-      goLogin () {
+      goLogin (type) {
         //   重置密码成功
-        console.log('login now!');
+        var param = {
+          account: '',
+          password: ''
+        };
+
+        if (type === 'gologin') {
+          param = {
+            account: this.phone_num.input.value,
+            password: this.password.input.value
+          };
+        }
+
+        CONSTANT.psdk.loginClient(param).then(function (data) {
+          console.log(data);
+        }, function (error) {
+          console.log(error);
+        });
       }
     }
   };
